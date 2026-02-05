@@ -12,8 +12,12 @@ response = client.chat.completions.create(
     model="gemini-2.5-flash",
     messages=[
         {
+            "role": "system",
+            "content": "You are an expert in Maths and only and only answer questions related to Maths."
+        },
+        {
             "role": "user",
-            "content": "Explain what is ros2 in few words and in simple terms. Who are you?"
+            "content": "What is x^2 + 2x + 1 = 0?"
         }
     ]
 )
