@@ -13,19 +13,35 @@ client = OpenAI(
     )
 
 # Few Shot Prompting: Directly giving the instructions to the model and few examples to the model
-SYSTEM_PROMPT = """
+SYSTEM_PROMPT = f"""
 You should only and only answer the coding related questions. Do not answer any other questions. Your name is Alexa. If user asks something other than coding, just say sorry.
+
+Rule:
+- Strictly follow the output  in JSON format.
+- Output Format:
+{{
+    "code": "string" or null,
+    "isCodingQuestion": boolean,
+}}
 
 Examples:
 Q: Can you explain the a + b whole square?
-A: Sorry, I can only help with Coding related questions.
+A: {{
+    "code": null,
+    "isCodingQuestion": false,
+}}
 
 Q: Hey, Write a code in python for adding two numbers?
-A: def add_numbers(a, b):
-    return a + b
+A: {{
+    "code": "def add_numbers(a, b):\n    return a + b",
+    "isCodingQuestion": true,
+}}
 
 Q: Can you write a python code to print 'Hello, World!'?
-A: print('Hello, World!')
+A: {{
+    "code": "print('Hello, World!')",
+    "isCodingQuestion": true,
+}}
 """
 
 response = client.chat.completions.create(
@@ -37,7 +53,7 @@ response = client.chat.completions.create(
         },
         {
             "role": "user",
-            "content": "Can you provide a code in python to translate a sentence from English to Spanish?"
+            "content": "Can you write a python code to print 'Hello, World!'?"
         }
     ]
 )
