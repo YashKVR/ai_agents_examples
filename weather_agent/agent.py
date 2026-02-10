@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 from openai import OpenAI
 import json
 import requests
+from pydantic import BaseModel, Field
+from typing import Optional
 
 load_dotenv()
 
@@ -19,8 +21,13 @@ def get_weather(city: str):
     else:
         return f"Something went wrong.Error: {response.status_code}"
 
+def run_command(cmd: str):
+    result = os.system(cmd)
+    return result
+
 available_tools = {
-    "get_weather": get_weather
+    "get_weather": get_weather,
+    "run_command": run_command
 }
 
 SYSTEM_PROMPT = f"""
@@ -46,6 +53,7 @@ Output JSON Format:
 
 Available Tools:
 - get_weather(city: str): Takes a city name as input and returns the weather information about that city.
+- run_command(cmd: str): Takes a system linuxcommand as input, executes the command on user's system and returns the result of the command.
 
 Example 1:
 START: Hey, Can you solve 2 + 3 * 10 / 5
@@ -86,6 +94,12 @@ OUTPUT: {{"step": "OUTPUT",
 
 print("\n\n\n")
 
+class MyOutputFormat(BaseModel):
+    step: str = Field(..., description="The ID of the step. Example: PLAN, OUTPUT, TOOL, START, OBSERVE etc.")
+    content: Optional[str] = Field(None, description="The content of the step.")
+    tool: Optional[str] = Field(None, description="The tool to be called. Example: get_weather")
+    input: Optional[str] = Field(None, description="The input to be passed to the tool. Example: delhi")
+
 message_history = [
     {"role": "system", "content": SYSTEM_PROMPT},
 ]
@@ -93,23 +107,23 @@ user_query = input("=> ")
 message_history.append({"role": "user", "content": user_query})
 
 while True:
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        response_format={"type": "json_object"},
+    response = client.chat.completions.parse(
+        model="gpt-4o",
+        response_format=MyOutputFormat,
         messages=message_history
     )
     raw_result = response.choices[0].message.content
     message_history.append({"role": "assistant", "content": raw_result})
 
-    parsed_result = json.loads(raw_result)
+    parsed_result = response.choices[0].message.parsed
     
-    if parsed_result["step"] == "START":
-        print("Starting LLM Loop ==>", parsed_result.get("content"))
+    if parsed_result.step == "START":
+        print("Starting LLM Loop ==>", parsed_result.content)
         continue
-    if parsed_result["step"] == "TOOL":
-        tool_to_call = parsed_result.get("tool")
-        tool_input = parsed_result.get("input")
-        print(f"Calling tool: {tool_to_call} with input: {parsed_result.get('input')}")
+    if parsed_result.step == "TOOL":
+        tool_to_call = parsed_result.tool
+        tool_input = parsed_result.input
+        print(f"Calling tool: {tool_to_call} with input: {parsed_result.input}")
 
         tool_response =available_tools[tool_to_call](tool_input)
         print(f"Tool response: {tool_response}")
@@ -118,10 +132,10 @@ while True:
         )})
         continue
 
-    if parsed_result["step"] == "PLAN":
-        print("Planning ==>", parsed_result.get("content"))
+    if parsed_result.step == "PLAN":
+        print("Planning ==>", parsed_result.content)
         continue
-    if parsed_result["step"] == "OUTPUT":
-        print("Output ==>", parsed_result.get("content"))
+    if parsed_result.step == "OUTPUT":
+        print("Output ==>", parsed_result.content)
         break
 print("\n\n\n")
