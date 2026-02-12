@@ -37,6 +37,7 @@ control-msgs==4.8.0
 controller==2025.0.0
 controller-manager==2.53.0
 controller-manager-msgs==2.53.0
+croniter==6.0.0
 cryptography==46.0.4
 cv-bridge==3.2.1
 dataclasses-json==0.6.7
@@ -142,9 +143,11 @@ pydantic-settings==2.12.0
 pydantic_core==2.41.5
 Pygments==2.19.2
 pypdf==6.7.0
+python-dateutil==2.9.0.post0
 python-dotenv==1.2.1
 python-multipart==0.0.22
 python-qt-binding==1.1.3
+pytz==2025.2
 PyYAML==6.0.3
 qb-device-msgs==4.1.3
 qb-softhand-industry-msgs==2.1.2
@@ -158,6 +161,7 @@ quality-of-service-demo-py==0.20.7
 rcl-interfaces==1.2.2
 rclpy==3.3.19
 rcutils==5.1.8
+redis==7.1.1
 regex==2026.1.15
 requests==2.32.5
 requests-toolbelt==1.0.0
@@ -203,6 +207,7 @@ rosidl-typesupport-fastrtps-cpp==2.2.4
 rosidl-typesupport-introspection-c==3.1.8
 rosidl-typesupport-introspection-cpp==3.1.8
 rpyutils==0.2.2
+rq==2.6.1
 rqt-action==2.0.1
 rqt-bag==1.1.5
 rqt-bag-plugins==1.1.5
@@ -227,6 +232,7 @@ sensor-msgs-py==4.9.0
 sentry-sdk==2.52.0
 shape-msgs==4.9.0
 shellingham==1.5.4
+six==1.17.0
 slam-toolbox==2.6.10
 smclib==4.1.2
 sniffio==1.3.1
