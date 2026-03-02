@@ -53,7 +53,7 @@ Output JSON Format:
 
 Available Tools:
 - get_weather(city: str): Takes a city name as input and returns the weather information about that city.
-- run_command(cmd: str): Takes a system linuxcommand as input, executes the command on user's system and returns the result of the command.
+- run_command(cmd: str): Takes a system linux command as input, executes the command on user's system and returns the result of the command.
 
 Example 1:
 START: Hey, Can you solve 2 + 3 * 10 / 5
